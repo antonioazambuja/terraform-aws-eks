@@ -92,14 +92,37 @@ resource "aws_security_group" "cluster" {
   }
 }
 
-resource "aws_security_group_rule" "cluster_ingress-workstation-https" {
-  cidr_blocks       = ["0.0.0.0/0"]
-  description       = "Allow workstation to communicate with the cluster API Server"
-  from_port         = 0
-  protocol          = "-1"
+resource "aws_security_group_rule" "cluster_cidr_block_rules" {
+  for_each          = { for rule in var.cluster_sg_rules: rule => rule if rule.source_security_group_id == null || rule.self == null }
   security_group_id = aws_security_group.cluster.id
-  to_port           = 0
-  type              = "ingress"
+  cidr_blocks       = each.value.cidr_blocks
+  description       = each.value.description
+  from_port         = each.value.from_port
+  to_port           = each.value.to_port
+  protocol          = each.value.protocol
+  type              = each.value.type
+}
+
+resource "aws_security_group_rule" "cluster_source_security_group_id_rules" {
+  for_each                 = { for rule in var.cluster_sg_rules: rule => rule if rule.cidr_blocks == null || rule.self == null }
+  security_group_id        = aws_security_group.cluster.id
+  source_security_group_id = each.value.source_security_group_id
+  description              = each.value.description
+  from_port                = each.value.from_port
+  to_port                  = each.value.to_port
+  protocol                 = each.value.protocol
+  type                     = each.value.type
+}
+
+resource "aws_security_group_rule" "cluster_self_rules" {
+  for_each          = { for rule in var.cluster_sg_rules: rule => rule if rule.cidr_blocks == null || rule.source_security_group_id == null }
+  security_group_id = aws_security_group.cluster.id
+  self              = each.value.self
+  description       = each.value.description
+  from_port         = each.value.from_port
+  to_port           = each.value.to_port
+  protocol          = each.value.protocol
+  type              = each.value.type
 }
 
 resource "aws_security_group" "node" {
@@ -119,13 +142,37 @@ resource "aws_security_group" "node" {
   }
 }
 
-resource "aws_security_group_rule" "node_ingress-workstation-https" {
-  cidr_blocks       = ["0.0.0.0/0"]
-  from_port         = 0
-  protocol          = "-1"
+resource "aws_security_group_rule" "node_cidr_block_rules" {
+  for_each          = { for rule in var.node_sg_rules: rule => rule if rule.source_security_group_id == null || rule.self == null }
   security_group_id = aws_security_group.node.id
-  to_port           = 0
-  type              = "ingress"
+  cidr_blocks       = each.value.cidr_blocks
+  description       = each.value.description
+  from_port         = each.value.from_port
+  to_port           = each.value.to_port
+  protocol          = each.value.protocol
+  type              = each.value.type
+}
+
+resource "aws_security_group_rule" "node_source_security_group_id_rules" {
+  for_each                 = { for rule in var.node_sg_rules: rule => rule if rule.cidr_blocks == null || rule.self == null }
+  security_group_id        = aws_security_group.node.id
+  source_security_group_id = each.value.source_security_group_id
+  description              = each.value.description
+  from_port                = each.value.from_port
+  to_port                  = each.value.to_port
+  protocol                 = each.value.protocol
+  type                     = each.value.type
+}
+
+resource "aws_security_group_rule" "node_self_rules" {
+  for_each          = { for rule in var.node_sg_rules: rule => rule if rule.cidr_blocks == null || rule.source_security_group_id == null }
+  security_group_id = aws_security_group.node.id
+  self              = each.value.self
+  description       = each.value.description
+  from_port         = each.value.from_port
+  to_port           = each.value.to_port
+  protocol          = each.value.protocol
+  type              = each.value.type
 }
 
 resource "aws_eks_cluster" "cluster" {

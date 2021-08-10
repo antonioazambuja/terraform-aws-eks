@@ -71,9 +71,57 @@ variable "node_sg_name" {
   type = string
 }
 
+variable "node_sg_rules" {
+  description = "Rules of Node Security Group"
+  type = list(object({
+    cidr_blocks = list(string)
+    description = string
+    from_port = number
+    to_port = number
+    protocol = string
+    source_security_group_id = string
+    self = string
+    type = string
+  }))
+  default = [{
+    cidr_blocks       = ["0.0.0.0/0"]
+    description       = "Allow communicate to any IP."
+    from_port         = 0
+    to_port           = 0
+    protocol          = "-1"
+    source_security_group_id = null
+    self = null
+    type              = "ingress"
+  }]
+}
+
 variable "cluster_sg_name" {
   description = "Cluster Security Group name"
   type = string
+}
+
+variable "cluster_sg_rules" {
+  description = "Rules of Cluster Security Group"
+  type = list(object({
+    cidr_blocks = list(string)
+    description = string
+    from_port = number
+    to_port = number
+    protocol = string
+    source_security_group_id = string
+    self = string
+    type = string
+  }))
+  default = [{
+    cidr_blocks       = ["0.0.0.0/0"]
+    description       = "Allow communicate to any IP."
+    from_port         = 0
+    to_port           = 0
+    protocol          = "-1"
+    source_security_group_id = null
+    self = null
+    type              = "ingress"
+  }]
 }
 
 variable "autoscaler_iam_role_name" {
