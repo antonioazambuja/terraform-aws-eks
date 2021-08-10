@@ -1,35 +1,3 @@
-data "aws_subnet_ids" "eks" {
-  filter {
-    name   = "availability-zone"
-    values = var.availability_zones
-  }
-}
-
-data "aws_ami" "eks-worker" {
-  most_recent      = true
-  owners           = ["602401143452"]
-
-  filter {
-    name   = "name"
-    values = ["amazon-eks-node-${var.k8s_version}-v*"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-}
-
 resource "aws_iam_role" "cluster" {
   name = var.cluster_iam_role_name
 
@@ -166,9 +134,7 @@ resource "aws_eks_cluster" "cluster" {
 
   vpc_config {
     security_group_ids = [aws_security_group.cluster.id]
-    # subnet_ids         = [for subnet in aws_subnet.private : subnet.id]
-    # If var.availability_zones not defined, choosing sort subnets to use on vpc_config
-    subnet_ids         = length(var.availability_zones) == 0 ? element(chunklist(sort([for subnet in aws_subnet.private : subnet.id]), var.number_availability_zones), 1) : []
+    subnet_ids         = var.subnets
   }
 
   depends_on = [
@@ -253,10 +219,10 @@ resource "aws_launch_configuration" "eks_launch_config" {
 }
 
 resource "aws_autoscaling_group" "eks_nodes" {
-  desired_capacity     = var.asg_desired_capacity
+  desired_capacity     = var.desired_capacity
   launch_configuration = aws_launch_configuration.eks_launch_config.id
-  max_size             = var.asg_max_size
-  min_size             = var.asg_min_size
+  max_size             = var.max_size
+  min_size             = var.min_size
   name                 = var.asg_name
   vpc_zone_identifier  = [for subnet in aws_subnet.private : subnet.id]
 
