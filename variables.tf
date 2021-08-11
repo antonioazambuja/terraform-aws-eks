@@ -147,3 +147,29 @@ variable "subnets" {
     error_message = "Use minimum 3 AWS Availability Zones in your EKS cluster!!!"
   }
 }
+
+variable "eks_tags" {
+  description = "A map of tags to assign to the EKS Cluster."
+  type        = map
+  default     = {}
+  validation {
+    condition     = length(var.eks_tags) > 0
+    error_message = "Tags from EKS Cluster is empty."
+  }
+}
+
+variable "load_balancer_tags" {
+  description = "A map of tags to assign to the Load Balancer."
+  type        = map
+  default     = {}
+  validation {
+    condition     = length(var.load_balancer_tags) > 0
+    error_message = "Tags from Load Balancer is empty."
+  }
+}
+
+variable "associate_public_ip_address" {
+  description = "A boolean value to define if will associated public ip address to instances on Launch Configuration."
+  type        = bool
+  default     = false
+}

@@ -184,6 +184,8 @@ resource "aws_eks_cluster" "cluster" {
     subnet_ids         = var.subnets
   }
 
+  tags = var.eks_tags
+
   depends_on = [
     aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.cluster_AmazonEKSServicePolicy,
@@ -241,17 +243,15 @@ resource "aws_lb" "subnets" {
   name               = var.lb_network_name
   internal           = true
   load_balancer_type = "network"
-  subnets            = [for subnet in aws_subnet.private : subnet.id]
+  subnets            = var.subnets
 
   enable_deletion_protection = false
 
-  tags = {
-    Name = var.lb_network_name
-  }
+  tags = var.load_balancer_tags
 }
 
 resource "aws_launch_configuration" "eks_launch_config" {
-  associate_public_ip_address = false
+  associate_public_ip_address = var.associate_public_ip_address
   iam_instance_profile        = aws_iam_instance_profile.node.name
   image_id                    = data.aws_ami.eks-worker.id
   instance_type               = var.workers_instance_type
@@ -271,7 +271,7 @@ resource "aws_autoscaling_group" "eks_nodes" {
   max_size             = var.max_size
   min_size             = var.min_size
   name                 = var.asg_name
-  vpc_zone_identifier  = [for subnet in aws_subnet.private : subnet.id]
+  vpc_zone_identifier  = var.subnets
 
   tag {
     key                 = "Name"
