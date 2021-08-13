@@ -16,10 +16,6 @@ variable "workers_instance_type" {
   description = "EC2 instance type of EKS workers"
   default = "t2.micro"
   type = string
-  validation {
-    condition = var.workers_instance_type == "t2.micro"
-    error_message = "Worker instance type not is 't2.micro'"
-  }
 }
 
 variable "node_prefix_name" {
