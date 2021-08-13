@@ -259,6 +259,7 @@ resource "aws_launch_configuration" "eks_launch_config" {
   security_groups             = [aws_security_group.node.id]
   user_data_base64            = base64encode(local.node_userdata)
   key_name                    = var.key_pair_name
+  ebs_optimized               = true
 
   lifecycle {
     create_before_destroy = true
