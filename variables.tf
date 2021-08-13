@@ -3,7 +3,7 @@ variable "eks_version" {
   default = "1.19.8"
   type = string
   validation {
-    condition     = contains(["1.19.8", "1.20.7", "1.21.2"])
+    condition     = contains(["1.19.8", "1.20.7", "1.21.2"], var.eks_version)
     error_message = "Your EKS version is depreciated."
   }
 }
