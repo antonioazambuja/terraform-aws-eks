@@ -82,7 +82,7 @@ variable "node_sg_rules" {
     to_port = number
     protocol = string
     source_security_group_id = string
-    self = string
+    self = bool
     type = string
   }))
   default = [{
@@ -91,8 +91,8 @@ variable "node_sg_rules" {
     from_port         = 0
     to_port           = 0
     protocol          = "-1"
-    source_security_group_id = null
-    self = null
+    source_security_group_id = ""
+    self = false
     type              = "ingress"
   }]
 }
@@ -112,7 +112,7 @@ variable "cluster_sg_rules" {
     to_port = number
     protocol = string
     source_security_group_id = string
-    self = string
+    self = bool
     type = string
   }))
   default = [{
@@ -121,8 +121,8 @@ variable "cluster_sg_rules" {
     from_port         = 0
     to_port           = 0
     protocol          = "-1"
-    source_security_group_id = null
-    self = null
+    source_security_group_id = ""
+    self = false
     type              = "ingress"
   }]
 }

@@ -93,7 +93,7 @@ resource "aws_security_group" "cluster" {
 }
 
 resource "aws_security_group_rule" "cluster_cidr_block_rules" {
-  for_each          = { for rule in var.cluster_sg_rules: rule => rule if rule.source_security_group_id == null || rule.self == null }
+  for_each          = { for rule in var.cluster_sg_rules: rule => rule if rule.source_security_group_id == "" || !rule.self && contains(["ingress", "egress"], rule.type) }
   security_group_id = aws_security_group.cluster.id
   cidr_blocks       = each.value.cidr_blocks
   description       = each.value.description
@@ -104,7 +104,7 @@ resource "aws_security_group_rule" "cluster_cidr_block_rules" {
 }
 
 resource "aws_security_group_rule" "cluster_source_security_group_id_rules" {
-  for_each                 = { for rule in var.cluster_sg_rules: rule => rule if rule.cidr_blocks == null || rule.self == null }
+  for_each                 = { for rule in var.cluster_sg_rules: rule => rule if length(rule.cidr_blocks) == 0 || !rule.self && rule.source_security_group_id != "" }
   security_group_id        = aws_security_group.cluster.id
   source_security_group_id = each.value.source_security_group_id
   description              = each.value.description
@@ -115,7 +115,7 @@ resource "aws_security_group_rule" "cluster_source_security_group_id_rules" {
 }
 
 resource "aws_security_group_rule" "cluster_self_rules" {
-  for_each          = { for rule in var.cluster_sg_rules: rule => rule if rule.cidr_blocks == null || rule.source_security_group_id == null }
+  for_each          = { for rule in var.cluster_sg_rules: rule => rule if length(rule.cidr_blocks) == 0 || rule.source_security_group_id != "" && rule.self }
   security_group_id = aws_security_group.cluster.id
   self              = each.value.self
   description       = each.value.description
@@ -143,7 +143,7 @@ resource "aws_security_group" "node" {
 }
 
 resource "aws_security_group_rule" "node_cidr_block_rules" {
-  for_each          = { for rule in var.node_sg_rules: rule => rule if rule.source_security_group_id == null || rule.self == null }
+  for_each          = { for rule in var.node_sg_rules: rule => rule if rule.source_security_group_id == "" || !rule.self && contains(["ingress", "egress"], rule.type) }
   security_group_id = aws_security_group.node.id
   cidr_blocks       = each.value.cidr_blocks
   description       = each.value.description
@@ -154,7 +154,7 @@ resource "aws_security_group_rule" "node_cidr_block_rules" {
 }
 
 resource "aws_security_group_rule" "node_source_security_group_id_rules" {
-  for_each                 = { for rule in var.node_sg_rules: rule => rule if rule.cidr_blocks == null || rule.self == null }
+  for_each                 = { for rule in var.node_sg_rules: rule => rule if length(rule.cidr_blocks) == 0 || !rule.self && rule.source_security_group_id != "" }
   security_group_id        = aws_security_group.node.id
   source_security_group_id = each.value.source_security_group_id
   description              = each.value.description
@@ -165,7 +165,7 @@ resource "aws_security_group_rule" "node_source_security_group_id_rules" {
 }
 
 resource "aws_security_group_rule" "node_self_rules" {
-  for_each          = { for rule in var.node_sg_rules: rule => rule if rule.cidr_blocks == null || rule.source_security_group_id == null }
+  for_each          = { for rule in var.node_sg_rules: rule => rule if length(rule.cidr_blocks) == 0 || rule.source_security_group_id == "" && rule.self }
   security_group_id = aws_security_group.node.id
   self              = each.value.self
   description       = each.value.description
@@ -227,7 +227,7 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
 }
 
 resource "aws_iam_instance_profile" "node" {
-  name = var.iam_instance_profile_name
+  name = "eks-node-${var.cluster_name}"
   role = aws_iam_role.node.name
 }
 
