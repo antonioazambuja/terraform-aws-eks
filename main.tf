@@ -78,7 +78,7 @@ resource "aws_iam_role_policy_attachment" "cluster_autoscaler" {
 
 resource "aws_security_group" "cluster" {
   name   = var.cluster_sg_name
-  vpc_id = aws_vpc.main.id
+  vpc_id = var.vpc_id
 
   egress {
     from_port   = 0
@@ -127,7 +127,7 @@ resource "aws_security_group_rule" "cluster_self_rules" {
 
 resource "aws_security_group" "node" {
   name   = var.node_sg_name
-  vpc_id = aws_vpc.main.id
+  vpc_id = var.vpc_id
 
   egress {
     from_port   = 0

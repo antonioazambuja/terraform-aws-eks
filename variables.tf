@@ -12,6 +12,10 @@ variable "cluster_name" {
   description = "EKS Cluster name"
 }
 
+variable "vpc_id" {
+  description = "VPC ID"
+}
+
 variable "workers_instance_type" {
   description = "EC2 instance type of EKS workers"
   default = "t2.micro"
