@@ -4,7 +4,7 @@ data "aws_ami" "eks-worker" {
 
   filter {
     name   = "name"
-    values = ["amazon-eks-node-${var.version}-v*"]
+    values = ["amazon-eks-node-${var.eks_version}-v*"]
   }
 
   filter {

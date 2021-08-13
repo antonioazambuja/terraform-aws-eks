@@ -1,4 +1,4 @@
-variable "version" {
+variable "eks_version" {
   description = "EKS version used in your Infrastructure"
   default = "1.19.8"
   type = string
@@ -63,11 +63,13 @@ variable "lb_network_name" {
 
 variable "node_iam_role_name" {
   description = "Node IAM role name"
+  default = "eks-node-role"
   type = string
 }
 
 variable "node_sg_name" {
   description = "Node Security Group name"
+  default = "eks-node-sg"
   type = string
 }
 
@@ -97,6 +99,7 @@ variable "node_sg_rules" {
 
 variable "cluster_sg_name" {
   description = "Cluster Security Group name"
+  default = "eks-cluster-sg"
   type = string
 }
 
@@ -126,16 +129,19 @@ variable "cluster_sg_rules" {
 
 variable "autoscaler_iam_role_name" {
   description = "Autoscaler IAM role name"
+  default = "eks-autoscaler"
   type = string
 }
 
 variable "custom_autoscaler_iam_role_name" {
   description = "Custom Autoscaler IAM role name"
+  default = "eks-custom-autoscaler"
   type = string
 }
 
 variable "cluster_iam_role_name" {
   description = "Cluster IAM role name"
+  default = "eks-cluster"
   type = string
 }
 
