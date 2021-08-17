@@ -1,9 +1,9 @@
 variable "eks_version" {
   description = "EKS version used in your Infrastructure"
-  default = "1.19.8"
+  default = "1.21"
   type = string
   validation {
-    condition     = contains(["1.19.8", "1.20.7", "1.21.2"], var.eks_version)
+    condition     = contains(["1.16", "1.17", "1.18", "1.19", "1.20", "1.21"], var.eks_version)
     error_message = "Your EKS version is depreciated."
   }
 }
