@@ -93,7 +93,7 @@ resource "aws_security_group" "cluster" {
 }
 
 resource "aws_security_group_rule" "cluster_cidr_block_rules" {
-  for_each          = { for rule in var.cluster_sg_rules: rule => rule if rule.source_security_group_id == "" || !rule.self && contains(["ingress", "egress"], rule.type) }
+  for_each          = { for rule in var.cluster_sg_rules: rule.description => rule if rule.source_security_group_id == "" || !rule.self && length(rule.cidr_blocks) > 0 }
   security_group_id = aws_security_group.cluster.id
   cidr_blocks       = each.value.cidr_blocks
   description       = each.value.description
@@ -143,7 +143,7 @@ resource "aws_security_group" "node" {
 }
 
 resource "aws_security_group_rule" "node_cidr_block_rules" {
-  for_each          = { for rule in var.node_sg_rules: rule => rule if rule.source_security_group_id == "" || !rule.self && contains(["ingress", "egress"], rule.type) }
+  for_each          = { for rule in var.node_sg_rules: rule.description => rule if rule.source_security_group_id == "" || !rule.self && length(rule.cidr_blocks) > 0 }
   security_group_id = aws_security_group.node.id
   cidr_blocks       = each.value.cidr_blocks
   description       = each.value.description
