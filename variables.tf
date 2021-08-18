@@ -51,6 +51,12 @@ variable "min_size" {
   type = number
 }
 
+variable "ebs_optimized" {
+  description = "EBS Optimized"
+  default = false
+  type = bool
+}
+
 variable "asg_name" {
   description = "Auto Scaling Group name"
   type = string
