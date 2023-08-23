@@ -1,31 +1,47 @@
 variable "eks_version" {
   description = "EKS version used in your Infrastructure"
-  default = "1.21"
+  default = "1.27"
   type = string
   validation {
-    condition     = contains(["1.16", "1.17", "1.18", "1.19", "1.20", "1.21"], var.eks_version)
+    condition     = contains(["1.23", "1.24", "1.25", "1.26", "1.27"], var.eks_version)
     error_message = "Your EKS version is depreciated."
   }
+}
+
+variable "cidr_block" {
+  default = "10.51.0.0/16"
+  description = "CIDR block used on new VPC"
+  type = string
 }
 
 variable "cluster_name" {
   description = "EKS Cluster name"
 }
 
-variable "vpc_id" {
-  description = "VPC ID"
-}
-
-variable "workers_instance_type" {
-  description = "EC2 instance type of EKS workers"
-  default = "t2.micro"
-  type = string
-}
-
-variable "node_prefix_name" {
-  description = "EKS workers node prefix name"
-  default = "node-"
-  type = string
+variable "eks_node_groups" {
+    default = [
+        {
+            desired_size = 1
+            max_size     = 3
+            min_size     = 1
+            name         = "general-purpose"
+            instance_types = ["t3.large", "t3.xlarge"]
+        },
+        # {
+        #     desired_size = 1
+        #     max_size     = 3
+        #     min_size     = 1
+        #     name         = "arm-based"
+        #     instance_types = ["t4g.large", "t4g.xlarge"]
+        # },
+        {
+            desired_size = 1
+            max_size     = 3
+            min_size     = 1
+            name         = "latest-gen-general-purpose"
+            instance_types = ["m5.xlarge"]
+        }
+    ]
 }
 
 variable "key_pair_name" {
@@ -33,131 +49,38 @@ variable "key_pair_name" {
   type = string
 }
 
-variable "desired_capacity" {
-  description = "Auto Scaling Group desired capacity"
-  default = 3
-  type = number
+variable "public_subnets" {
+    default = [
+        {
+            availability_zone = "us-east-1a"
+            newbits = 8
+        },
+        {
+            availability_zone = "us-east-1b"
+            newbits = 8
+        },
+        {
+            availability_zone = "us-east-1c"
+            newbits = 8
+        }
+    ]
 }
 
-variable "max_size" {
-  description = "Auto Scaling Group maximum size"
-  default = 3
-  type = number
-}
-
-variable "min_size" {
-  description = "Auto Scaling Group minimum size"
-  default = 1
-  type = number
-}
-
-variable "ebs_optimized" {
-  description = "EBS Optimized"
-  default = false
-  type = bool
-}
-
-variable "asg_name" {
-  description = "Auto Scaling Group name"
-  type = string
-}
-
-variable "lb_network_name" {
-  description = "EKS Network Load Balancer name"
-  type = string
-}
-
-variable "node_iam_role_name" {
-  description = "Node IAM role name"
-  default = "eks-node-role"
-  type = string
-}
-
-variable "node_sg_name" {
-  description = "Node Security Group name"
-  default = "eks-node-sg"
-  type = string
-}
-
-variable "node_sg_rules" {
-  description = "Rules of Node Security Group"
-  type = list(object({
-    cidr_blocks = list(string)
-    description = string
-    from_port = number
-    to_port = number
-    protocol = string
-    source_security_group_id = string
-    self = bool
-    type = string
-  }))
-  default = [{
-    cidr_blocks       = ["0.0.0.0/0"]
-    description       = "Allow communicate to any IP."
-    from_port         = 0
-    to_port           = 0
-    protocol          = "-1"
-    source_security_group_id = ""
-    self = false
-    type              = "ingress"
-  }]
-}
-
-variable "cluster_sg_name" {
-  description = "Cluster Security Group name"
-  default = "eks-cluster-sg"
-  type = string
-}
-
-variable "cluster_sg_rules" {
-  description = "Rules of Cluster Security Group"
-  type = list(object({
-    cidr_blocks = list(string)
-    description = string
-    from_port = number
-    to_port = number
-    protocol = string
-    source_security_group_id = string
-    self = bool
-    type = string
-  }))
-  default = [{
-    cidr_blocks       = ["0.0.0.0/0"]
-    description       = "Allow communicate to any IP."
-    from_port         = 0
-    to_port           = 0
-    protocol          = "-1"
-    source_security_group_id = ""
-    self = false
-    type              = "ingress"
-  }]
-}
-
-variable "autoscaler_iam_role_name" {
-  description = "Autoscaler IAM role name"
-  default = "eks-autoscaler"
-  type = string
-}
-
-variable "custom_autoscaler_iam_role_name" {
-  description = "Custom Autoscaler IAM role name"
-  default = "eks-custom-autoscaler"
-  type = string
-}
-
-variable "cluster_iam_role_name" {
-  description = "Cluster IAM role name"
-  default = "eks-cluster"
-  type = string
-}
-
-variable "subnets" {
-  description = "Subnets ie AWS Availability Zones to deploy your EKS"
-  type = list
-  validation {
-    condition = length(var.subnets) >= 3
-    error_message = "Use minimum 3 AWS Availability Zones in your EKS cluster!!!"
-  }
+variable "private_subnets" {
+    default = [
+        {
+            availability_zone = "us-east-1a"
+            newbits = 5
+        },
+        {
+            availability_zone = "us-east-1b"
+            newbits = 5
+        },
+        {
+            availability_zone = "us-east-1c"
+            newbits = 5
+        }
+    ]
 }
 
 variable "eks_tags" {
@@ -170,18 +93,50 @@ variable "eks_tags" {
   }
 }
 
-variable "load_balancer_tags" {
-  description = "A map of tags to assign to the Load Balancer."
-  type        = map
-  default     = {}
-  validation {
-    condition     = length(var.load_balancer_tags) > 0
-    error_message = "Tags from Load Balancer is empty."
-  }
+variable "vpc_tags" {
+    default = {
+        Name = "MainVPC"
+    }
 }
 
-variable "associate_public_ip_address" {
-  description = "A boolean value to define if will associated public ip address to instances on Launch Configuration."
-  type        = bool
-  default     = false
+variable "public_subnet_tags" {
+    default = {
+        AccessMode = "PUBLIC"
+    }
+}
+
+variable "igw_tags" {
+    default = {
+        Name = "MainIGW"
+    }
+}
+
+variable "rt_igw_tags" {
+    default = {
+        Name = "MainIGW"
+    }
+}
+
+variable "private_subnet_tags" {
+    default = {
+        AccessMode = "PRIVATE"
+    }
+}
+
+variable "eip_nat_tags" {
+    default = {
+        Name = "EIPVpc"
+    }
+}
+
+variable "nat_gateway_tags" {
+    default = {
+        Name = "MainNATGateway"
+    }
+}
+
+variable "rt_nat_tags" {
+    default = {
+        Name = "MainNATGateway"
+    }
 }
