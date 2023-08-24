@@ -24,8 +24,8 @@ variable "node_sg_rules" {
     from_port                = number
     to_port                  = number
     protocol                 = string
-    source_security_group_id = string
-    self                     = bool
+    # source_security_group_id = string
+    # self                     = bool
     type                     = string
   }))
   validation {
