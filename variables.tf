@@ -104,60 +104,12 @@ variable "private_subnets" {
   }
 }
 
-variable "eks_tags" {
+variable "tags" {
   description = "A map of tags to assign to the EKS Cluster."
   type        = map
   default     = {}
   validation {
-    condition     = length(var.eks_tags) > 0
+    condition     = length(var.tags) > 0
     error_message = "Tags from EKS Cluster is empty."
   }
-}
-
-variable "vpc_tags" {
-    default = {
-        Name = "MainVPC"
-    }
-}
-
-variable "public_subnet_tags" {
-    default = {
-        AccessMode = "PUBLIC"
-    }
-}
-
-variable "igw_tags" {
-    default = {
-        Name = "MainIGW"
-    }
-}
-
-variable "rt_igw_tags" {
-    default = {
-        Name = "MainIGW"
-    }
-}
-
-variable "private_subnet_tags" {
-    default = {
-        AccessMode = "PRIVATE"
-    }
-}
-
-variable "eip_nat_tags" {
-    default = {
-        Name = "EIPVpc"
-    }
-}
-
-variable "nat_gateway_tags" {
-    default = {
-        Name = "MainNATGateway"
-    }
-}
-
-variable "rt_nat_tags" {
-    default = {
-        Name = "MainNATGateway"
-    }
 }
