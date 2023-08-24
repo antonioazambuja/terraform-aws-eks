@@ -8,9 +8,8 @@ variable "eks_version" {
 }
 
 variable "cidr_block" {
-  default = "10.51.0.0/16"
   description = "CIDR block used on new VPC"
-  type = string
+  type        = string
 }
 
 variable "cluster_name" {
@@ -18,29 +17,28 @@ variable "cluster_name" {
 }
 
 variable "eks_node_groups" {
-    default = [
-        {
-            desired_size = 1
-            max_size     = 3
-            min_size     = 1
-            name         = "general-purpose"
-            instance_types = ["t3.large", "t3.xlarge"]
-        },
-        # {
-        #     desired_size = 1
-        #     max_size     = 3
-        #     min_size     = 1
-        #     name         = "arm-based"
-        #     instance_types = ["t4g.large", "t4g.xlarge"]
-        # },
-        {
-            desired_size = 1
-            max_size     = 3
-            min_size     = 1
-            name         = "latest-gen-general-purpose"
-            instance_types = ["m5.xlarge"]
-        }
-    ]
+  description = "EKS Node Groups"
+  type = list(object({
+    desired_size = number
+    name = string
+    min_size = number
+    max_size = number
+    instance_types = list(string)
+  }))
+  validation {
+    condition = anytrue([for min_size in var.eks_node_groups[*].min_size : true if min_size > 3])
+    error_message = "EKS Node Groups need setting with minimum 3 instances."
+  }
+  validation {
+    condition = alltrue(
+      [
+        for instance_types in var.eks_node_groups[*].instance_types : [
+          for instance_type in instance_types : false if startswith("t2", instance_type)
+        ]
+      ]
+    )
+    error_message = "Your EKS cluster is using T2 class of EC2."
+  }
 }
 
 variable "key_pair_name" {
