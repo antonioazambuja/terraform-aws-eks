@@ -16,6 +16,40 @@ variable "cluster_name" {
   description = "EKS Cluster name"
 }
 
+variable "node_sg_rules" {
+  description = "Rules of Node Security Group"
+  type = list(object({
+    cidr_blocks              = list(string)
+    description              = string
+    from_port                = number
+    to_port                  = number
+    protocol                 = string
+    source_security_group_id = string
+    self                     = bool
+    type                     = string
+  }))
+  validation {
+    condition     = anytrue([for cidr_blocks in var.node_sg_rules[*].cidr_blocks : false if contains(cidr_blocks, "0.0.0.0")])
+    error_message = "Not recommended use CIDR block 0.0.0.0/0 on your Security Group Rules as Ingress."
+  }
+  validation {
+    condition     = anytrue([for description in var.node_sg_rules[*].description : description == ""])
+    error_message = "Description field not must be empty."
+  }
+  validation {
+    condition     = anytrue([for from_port in var.node_sg_rules[*].from_port : from_port == 0])
+    error_message = "Value from_port not must be 0."
+  }
+  validation {
+    condition     = anytrue([for to_port in var.node_sg_rules[*].to_port : to_port == 0])
+    error_message = "Value to_port not must be 0."
+  }
+  validation {
+    condition     = anytrue([for protocol in var.node_sg_rules[*].protocol : protocol == "-1"])
+    error_message = "Value protocol not must be '-1'."
+  }
+}
+
 variable "eks_node_groups" {
   description = "EKS Node Groups"
   type = list(object({
