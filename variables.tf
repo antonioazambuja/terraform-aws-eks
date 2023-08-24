@@ -1,6 +1,7 @@
 variable "eks_version" {
   description = "EKS version used in your Infrastructure"
   type        = string
+  default     = ""
   validation {
     condition     = contains(["1.23", "1.24", "1.25", "1.26", "1.27"], var.eks_version)
     error_message = "Your EKS version is depreciated."
@@ -10,10 +11,12 @@ variable "eks_version" {
 variable "cidr_block" {
   description = "CIDR block used on new VPC"
   type        = string
+  default     = ""
 }
 
 variable "cluster_name" {
   description = "EKS Cluster name"
+  default     = ""
 }
 
 variable "node_sg_rules" {
@@ -28,6 +31,7 @@ variable "node_sg_rules" {
     # self                     = bool
     type                     = string
   }))
+  default = []
   validation {
     condition     = anytrue([for cidr_blocks in var.node_sg_rules[*].cidr_blocks : false if contains(cidr_blocks, "0.0.0.0")])
     error_message = "Not recommended use CIDR block 0.0.0.0/0 on your Security Group Rules as Ingress."
@@ -59,6 +63,7 @@ variable "eks_node_groups" {
     max_size = number
     instance_types = list(string)
   }))
+  default = []
   validation {
     condition = anytrue([for min_size in var.eks_node_groups[*].min_size : true if min_size > 3])
     error_message = "EKS Node Groups need setting with minimum 3 instances."
@@ -86,6 +91,7 @@ variable "public_subnets" {
     availability_zone = number
     newbits = string
   }))
+  default = []
   validation {
     condition = length(var.public_subnets) > 2
     error_message = "Your EKS cluster not is Multi AZ. Use 3 avaibility zones at least."
@@ -98,6 +104,7 @@ variable "private_subnets" {
     availability_zone = number
     newbits = string
   }))
+  default = []
   validation {
     condition = length(var.private_subnets) > 2
     error_message = "Your EKS cluster not is Multi AZ. Use 3 avaibility zones at least."
