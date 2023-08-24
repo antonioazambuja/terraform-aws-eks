@@ -81,37 +81,27 @@ variable "key_pair_name" {
 }
 
 variable "public_subnets" {
-    default = [
-        {
-            availability_zone = "us-east-1a"
-            newbits = 8
-        },
-        {
-            availability_zone = "us-east-1b"
-            newbits = 8
-        },
-        {
-            availability_zone = "us-east-1c"
-            newbits = 8
-        }
-    ]
+  description = "Public Subnets"
+  type = list(object({
+    availability_zone = number
+    newbits = string
+  }))
+  validation {
+    condition = length(var.public_subnets) > 2
+    error_message = "Your EKS cluster not is Multi AZ. Use 3 avaibility zones at least."
+  }
 }
 
 variable "private_subnets" {
-    default = [
-        {
-            availability_zone = "us-east-1a"
-            newbits = 5
-        },
-        {
-            availability_zone = "us-east-1b"
-            newbits = 5
-        },
-        {
-            availability_zone = "us-east-1c"
-            newbits = 5
-        }
-    ]
+  description = "Public Subnets"
+  type = list(object({
+    availability_zone = number
+    newbits = string
+  }))
+  validation {
+    condition = length(var.private_subnets) > 2
+    error_message = "Your EKS cluster not is Multi AZ. Use 3 avaibility zones at least."
+  }
 }
 
 variable "eks_tags" {
