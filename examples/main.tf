@@ -1,5 +1,5 @@
 module "eks_cluster" {
-    source = "../"
+    source = "git@github.com:antonioazambuja/terraform-aws-eks.git"
     eks_version = "1.27"
     cluster_name = "eks-multi-az"
     key_pair_name = "sre-laboratory"
