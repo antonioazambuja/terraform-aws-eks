@@ -33,23 +33,23 @@ variable "node_sg_rules" {
   }))
   default = []
   validation {
-    condition     = anytrue([for cidr_blocks in var.node_sg_rules[*].cidr_blocks : false if contains(cidr_blocks, "0.0.0.0")])
+    condition     = anytrue([for rule in var.node_sg_rules : !contains(rule.cidr_blocks, "0.0.0.0")])
     error_message = "Not recommended use CIDR block 0.0.0.0/0 on your Security Group Rules as Ingress."
   }
   validation {
-    condition     = anytrue([for description in var.node_sg_rules[*].description : description == ""])
+    condition     = anytrue([for rule in var.node_sg_rules : rule.description != ""])
     error_message = "Description field not must be empty."
   }
   validation {
-    condition     = anytrue([for from_port in var.node_sg_rules[*].from_port : from_port == 0])
+    condition     = anytrue([for rule in var.node_sg_rules : rule.from_port == 0])
     error_message = "Value from_port not must be 0."
   }
   validation {
-    condition     = anytrue([for to_port in var.node_sg_rules[*].to_port : to_port == 0])
+    condition     = anytrue([for rule in var.node_sg_rules : rule.to_port == 0])
     error_message = "Value to_port not must be 0."
   }
   validation {
-    condition     = anytrue([for protocol in var.node_sg_rules[*].protocol : protocol == "-1"])
+    condition     = anytrue([for rule in var.node_sg_rules : rule.protocol == "-1"])
     error_message = "Value protocol not must be '-1'."
   }
 }
@@ -63,17 +63,32 @@ variable "eks_node_groups" {
     max_size = number
     instance_types = list(string)
   }))
-  default = []
+  default = [
+        {
+            desired_size = 1
+            max_size     = 3
+            min_size     = 3
+            name         = "general-purpose"
+            instance_types = ["t3.large", "t3.xlarge"]
+        },
+        {
+            desired_size = 1
+            max_size     = 3
+            min_size     = 3
+            name         = "latest-gen-general-purpose"
+            instance_types = ["m5.xlarge"]
+        }
+    ]
   validation {
-    condition = anytrue([for min_size in var.eks_node_groups[*].min_size : true if min_size > 3])
+    condition = anytrue([for node_group in var.eks_node_groups : node_group.min_size >= 3])
     error_message = "EKS Node Groups need setting with minimum 3 instances."
   }
   validation {
-    condition = alltrue(
+    condition = anytrue(
       [
-        for instance_types in var.eks_node_groups[*].instance_types : [
-          for instance_type in instance_types : false if startswith("t2", instance_type)
-        ]
+        for node_group in var.eks_node_groups : anytrue([
+          for instance_type in node_group.instance_types : !startswith("t2", instance_type)
+        ])
       ]
     )
     error_message = "Your EKS cluster is using T2 class of EC2."
@@ -88,8 +103,8 @@ variable "key_pair_name" {
 variable "public_subnets" {
   description = "Public Subnets"
   type = list(object({
-    availability_zone = number
-    newbits = string
+    availability_zone = string
+    newbits           = number
   }))
   default = []
   validation {
@@ -101,8 +116,8 @@ variable "public_subnets" {
 variable "private_subnets" {
   description = "Public Subnets"
   type = list(object({
-    availability_zone = number
-    newbits = string
+    availability_zone = string
+    newbits           = number
   }))
   default = []
   validation {
