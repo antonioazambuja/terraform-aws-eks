@@ -34,14 +34,14 @@ module "eks_cluster" {
     ]
     eks_node_groups = [
         {
-            desired_size = 1
+            desired_size = 3
             max_size     = 3
             min_size     = 3
             name         = "general-purpose"
             instance_types = ["t3.large", "t3.xlarge"]
         },
         {
-            desired_size = 1
+            desired_size = 3
             max_size     = 3
             min_size     = 3
             name         = "latest-gen-general-purpose"
