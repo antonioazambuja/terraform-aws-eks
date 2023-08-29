@@ -22,6 +22,7 @@ variable "cluster_name" {
 variable "node_sg_rules" {
   description = "Rules of Node Security Group"
   type = list(object({
+    name                     = optional(string, "")
     cidr_blocks              = list(string)
     description              = string
     from_port                = number

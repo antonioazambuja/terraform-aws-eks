@@ -1,5 +1,5 @@
 resource "aws_security_group_rule" "eks_sg_ingress_rule" {
-    for_each    = { for rule in var.node_sg_rules: rule.name => format("%s-%i-%i-%s-%s", replace(join("-", rule.cidr_blocks), "-"), rule.from_port, rule.to_port, rule.protocol, rule.type) }
+    for_each = { for rule in var.node_sg_rules: rule.name => rule }
     cidr_blocks = each.value.cidr_blocks
     from_port   = each.value.from_port
     to_port     = each.value.to_port
