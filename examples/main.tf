@@ -39,14 +39,15 @@ module "eks_cluster" {
             min_size     = 3
             name         = "general-purpose"
             instance_types = ["t3.large", "t3.xlarge"]
-        },
-        {
-            desired_size = 3
-            max_size     = 3
-            min_size     = 3
-            name         = "latest-gen-general-purpose"
-            instance_types = ["m5.xlarge"]
         }
+        # ,
+        # {
+        #     desired_size = 3
+        #     max_size     = 3
+        #     min_size     = 3
+        #     name         = "latest-gen-general-purpose"
+        #     instance_types = ["m5.xlarge"]
+        # }
     ]
     node_sg_rules = [
         {
