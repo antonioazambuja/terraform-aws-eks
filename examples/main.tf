@@ -1,5 +1,5 @@
 module "eks_cluster" {
-    source = "git@github.com:antonioazambuja/terraform-aws-eks.git"
+    source = "../modules/eks/"
     eks_version = "1.27"
     cluster_name = "eks-multi-az"
     key_pair_name = "sre-laboratory"
@@ -62,4 +62,11 @@ module "eks_cluster" {
     tags = {
         Name = "eks-multi-az"
     }
+}
+
+module "istio" {
+    source = "../modules/istio/"
+    depends_on = [
+        module.eks_cluster
+    ]
 }
