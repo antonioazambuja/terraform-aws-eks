@@ -156,3 +156,8 @@ variable "prometheus_chart_url" {
   default = "https://prometheus-community.github.io/helm-charts"
   type    = string
 }
+
+variable "grafana_chart_url" {
+  default = "https://prometheus-community.github.io/helm-charts"
+  type    = string
+}
