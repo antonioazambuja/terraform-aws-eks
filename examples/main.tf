@@ -38,7 +38,7 @@ module "eks_cluster" {
             max_size     = 3
             min_size     = 3
             name         = "general-purpose"
-            instance_types = ["t3.large", "t3.xlarge"]
+            instance_types = ["t3.micro"]
         }
         # ,
         # {
