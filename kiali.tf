@@ -9,7 +9,8 @@ resource "helm_release" "kiali" {
 
   depends_on = [
     helm_release.istio_base,
-    helm_release.istiod
+    helm_release.istiod,
+    aws_eks_node_group.eks_node_group
   ]
 }
 
@@ -50,4 +51,8 @@ spec:
     tracing:
       enabled: false
   YAML
+
+  depends_on = [
+    aws_eks_node_group.eks_node_group
+  ]
 }

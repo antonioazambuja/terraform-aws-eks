@@ -14,6 +14,10 @@ resource "helm_release" "prometheus" {
     name = "alertmanager.enabled"
     value = "false"
   }
+
+  depends_on = [
+    aws_eks_node_group.eks_node_group
+  ]
 }
 
 resource "helm_release" "grafana" {
@@ -22,4 +26,9 @@ resource "helm_release" "grafana" {
   name       = "grafana"
   namespace  = helm_release.istio_base.metadata[0].namespace
   wait       = true
+
+  depends_on = [
+    aws_eks_node_group.eks_node_group,
+    helm_release.prometheus
+  ]
 }
