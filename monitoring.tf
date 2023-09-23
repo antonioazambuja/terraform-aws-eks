@@ -27,6 +27,10 @@ resource "helm_release" "grafana" {
   namespace  = helm_release.istio_base.metadata[0].namespace
   wait       = true
 
+  values = [
+    "${file("${path.module}/grafana/values.yaml")}"
+  ]
+
   depends_on = [
     aws_eks_node_group.eks_node_group,
     helm_release.prometheus
