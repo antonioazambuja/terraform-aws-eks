@@ -130,7 +130,7 @@ variable "public_subnets" {
 }
 
 variable "private_subnets" {
-  description = "Public Subnets"
+  description = "Private Subnets"
   type = list(object({
     availability_zone = string
     newbits           = number
