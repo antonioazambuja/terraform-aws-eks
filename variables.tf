@@ -152,7 +152,7 @@ variable "kiali_chart_url" {
   type    = string
 }
 
-variable "prometheus_chart_url" {
+variable "kube_prometheus_chart_url" {
   default = "https://prometheus-community.github.io/helm-charts"
   type    = string
 }
