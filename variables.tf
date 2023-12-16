@@ -8,6 +8,21 @@ variable "eks_version" {
   }
 }
 
+variable "root_device_type" {
+  default = ["ebs"]
+  type = list(string)
+}
+
+variable "virtualization_type" {
+  default = ["hvm"]
+  type = list(string)
+}
+
+variable "architecture" {
+  default = ["x86_64"]
+  type = list(string)
+}
+
 variable "cidr_block" {
   description = "CIDR block used on new VPC"
   type        = string

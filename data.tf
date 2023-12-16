@@ -9,16 +9,16 @@ data "aws_ami" "eks-worker" {
 
   filter {
     name   = "root-device-type"
-    values = ["ebs"]
+    values = var.root_device_type
   }
 
   filter {
     name   = "virtualization-type"
-    values = ["hvm"]
+    values = var.virtualization_type
   }
 
   filter {
     name   = "architecture"
-    values = ["x86_64"]
+    values = var.architecture
   }
 }
