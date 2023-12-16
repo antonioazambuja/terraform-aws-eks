@@ -28,3 +28,9 @@ terraform apply
 terraform pĺan -destroy
 terraform apply -destroy
 ```
+
+## About this project
+
+### Providers
+
+Terraform Kubectl Provider [alekc/terraform-provider-kubectl](https://github.com/alekc/terraform-provider-kubectl): This project is a fork on [gavinbunney/terraform-provider-kubectl](https://github.com/gavinbunney/terraform-provider-kubectl). I use this project because a issue opened on gavinbunney/terraform-provider-kubectl that not working install manifest using `kubectl_manifest`. More details: https://github.com/gavinbunney/terraform-provider-kubectl/issues/270.
