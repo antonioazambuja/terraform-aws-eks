@@ -8,6 +8,21 @@ variable "eks_version" {
   }
 }
 
+variable "root_device_type" {
+  default = ["ebs"]
+  type = list(string)
+}
+
+variable "virtualization_type" {
+  default = ["hvm"]
+  type = list(string)
+}
+
+variable "architecture" {
+  default = ["x86_64"]
+  type = list(string)
+}
+
 variable "cidr_block" {
   description = "CIDR block used on new VPC"
   type        = string
@@ -115,7 +130,7 @@ variable "public_subnets" {
 }
 
 variable "private_subnets" {
-  description = "Public Subnets"
+  description = "Private Subnets"
   type = list(object({
     availability_zone = string
     newbits           = number
@@ -152,12 +167,12 @@ variable "kiali_chart_url" {
   type    = string
 }
 
-variable "prometheus_chart_url" {
+variable "kube_prometheus_chart_url" {
   default = "https://prometheus-community.github.io/helm-charts"
   type    = string
 }
 
 variable "grafana_chart_url" {
-  default = "https://prometheus-community.github.io/helm-charts"
+  default = "https://grafana.github.io/helm-charts"
   type    = string
 }

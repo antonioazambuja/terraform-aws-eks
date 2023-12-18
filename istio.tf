@@ -7,6 +7,10 @@ resource "helm_release" "istio_base" {
   wait       = true
 
   create_namespace = true
+
+  depends_on = [
+    aws_eks_node_group.eks_node_group
+  ]
 }
 
 resource "helm_release" "istiod" {
@@ -16,6 +20,10 @@ resource "helm_release" "istiod" {
   namespace  = helm_release.istio_base.metadata[0].namespace
   version    = var.istio_chart_version
   wait       = true
+
+  depends_on = [
+    aws_eks_node_group.eks_node_group
+  ]
 
   set {
     name  = "meshConfig.accessLogFile"

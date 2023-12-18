@@ -1,25 +1,16 @@
-resource "helm_release" "prometheus" {
-  repository = var.prometheus_chart_url
-  chart      = "prometheus"
-  name       = "prometheus"
+resource "helm_release" "kube_prometheus" {
+  repository = var.kube_prometheus_chart_url
+  chart      = "kube-prometheus-stack"
+  name       = "kube-prometheus-stack"
   namespace  = helm_release.istio_base.metadata[0].namespace
   wait       = true
 
   set {
-    name  = "server.persistentVolume.enabled"
-    value = "false"
+    name  = "grafana.sidecar.dashboardsConfigMaps.default"
+    value = "istio-dashboards"
   }
 
-  set {
-    name = "alertmanager.enabled"
-    value = "false"
-  }
-}
-
-resource "helm_release" "grafana" {
-  repository = var.grafana_chart_url
-  chart      = "grafana"
-  name       = "grafana"
-  namespace  = helm_release.istio_base.metadata[0].namespace
-  wait       = true
+  depends_on = [
+    aws_eks_node_group.eks_node_group
+  ]
 }

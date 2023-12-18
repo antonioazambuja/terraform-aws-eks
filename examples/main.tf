@@ -35,10 +35,10 @@ module "eks_cluster" {
     eks_node_groups = [
         {
             desired_size = 3
-            max_size     = 3
+            max_size     = 8
             min_size     = 3
             name         = "general-purpose"
-            instance_types = ["t3.large", "t3.xlarge"]
+            instance_types = ["t3.medium"]
         }
         # ,
         # {
