@@ -14,3 +14,16 @@ resource "helm_release" "kube_prometheus" {
     aws_eks_node_group.eks_node_group
   ]
 }
+
+resource "helm_release" "metrics_server" {
+  repository = var.metrics_server_chart_url
+  chart      = "metrics-server"
+  name       = "metrics-server"
+  namespace  = "kube-system"
+  version    = var.metrics_server_chart_version
+  wait       = true
+
+  depends_on = [
+    aws_eks_node_group.eks_node_group
+  ]
+}
