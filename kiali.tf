@@ -53,6 +53,7 @@ spec:
   YAML
 
   depends_on = [
-    aws_eks_node_group.eks_node_group
+    aws_eks_node_group.eks_node_group,
+    helm_release.kiali
   ]
 }

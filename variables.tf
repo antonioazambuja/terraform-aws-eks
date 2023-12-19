@@ -176,3 +176,23 @@ variable "grafana_chart_url" {
   default = "https://grafana.github.io/helm-charts"
   type    = string
 }
+
+variable "metrics_server_chart_url" {
+  default = "https://kubernetes-sigs.github.io/metrics-server/"
+  type    = string
+}
+
+variable "metrics_server_chart_version" {
+  default = "3.11.0"
+  type    = string
+}
+
+variable "ingress_nginx_chart_url" {
+  default = "https://kubernetes.github.io/ingress-nginx"
+  type    = string
+}
+
+variable "ingress_nginx_chart_version" {
+  default = "4.8.4"
+  type    = string
+}
